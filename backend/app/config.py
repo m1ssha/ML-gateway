@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://redis:6379/0"
 
     # ML Service
-    ML_SERVICE_URL: str = "http://ml-service:8001/predict"
+    ML_SERVICE_URL: str = "http://ml-service:8000/predict"
 
     # LLM Settings
     LLM_PROVIDER: LLMProvider = LLMProvider.MOCK

@@ -47,7 +47,7 @@ services:
     environment:
       - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-gateway}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-llm_gateway}
       - REDIS_URL=redis://redis:6379/0
-      - ML_SERVICE_URL=http://ml-service:8000
+      - ML_SERVICE_URL=http://ml-service:8000/predict
       - LLM_PROVIDER=mock
     ports:
       - "8001:8001"
