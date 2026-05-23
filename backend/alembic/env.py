@@ -22,7 +22,7 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-from app.storage.models.base import Base
+from app.storage.models import Base, SessionModel, MessageModel, EventLogModel
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
