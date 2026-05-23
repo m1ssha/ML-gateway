@@ -1,9 +1,7 @@
 <script setup>
 import { computed } from 'vue'
-import { CheckCircle2, User, Bot, ShieldCheck } from 'lucide-vue-next'
-import { formatDateTime } from '@/utils/formatters'
+import { User, Bot, AlertTriangle, ShieldCheck, ShieldAlert } from 'lucide-vue-next'
 import RiskBadge from '@/components/risk/RiskBadge.vue'
-import BlockedMessage from './BlockedMessage.vue'
 
 const props = defineProps({
   message: {
@@ -13,70 +11,80 @@ const props = defineProps({
   showRisk: {
     type: Boolean,
     default: true
-  },
-  index: {
-    type: Number,
-    default: 0
   }
 })
 
 const isUser = computed(() => props.message.role === 'user')
-const isSystem = computed(() => props.message.role === 'system')
-const isAssistant = computed(() => props.message.role === 'assistant')
-const isBlocked = computed(() => props.message.decision === 'blocked')
-const isReviewed = computed(() => props.message.decision === 'reviewed')
+const isBlocked = computed(() => props.message.is_blocked)
 
-const containerClass = computed(() => [
-  'flex w-full mb-6',
-  isUser.value ? 'justify-end' : 'justify-start'
-])
+const containerClass = computed(() => {
+  return [
+    'flex w-full mb-6 px-6 transition-all duration-500',
+    isUser.value ? 'justify-end' : 'justify-start'
+  ]
+})
 
-const bubbleClass = computed(() => [
-  'relative px-4 py-3 rounded-2xl shadow-sm text-sm leading-relaxed',
-  isUser.value
-    ? 'bg-emerald-600 text-white rounded-tr-none max-w-[70%]'
-    : 'bg-white text-stone-700 border border-stone-100 rounded-tl-none max-w-[90%]'
-])
-
-const animationDelay = computed(() => `${props.index * 60}ms`)
+const bubbleClass = computed(() => {
+  if (isUser.value) {
+    return 'bg-indigo-600 text-white rounded-2xl rounded-tr-none shadow-lg shadow-indigo-600/20'
+  }
+  return 'glass-card rounded-2xl rounded-tl-none border-white/60'
+})
 </script>
 
 <template>
-  <div :class="containerClass" class="message-enter" :style="{ animationDelay }">
-    <div v-if="!isUser" class="mr-3 flex-shrink-0">
-      <div class="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center border border-stone-200">
-        <Bot v-if="isAssistant" class="w-4 h-4 text-emerald-600" />
-        <ShieldCheck v-else class="w-4 h-4 text-red-500" />
-      </div>
-    </div>
-
-    <div class="flex flex-col" :class="isUser ? 'items-end' : 'items-start'">
-      <div v-if="isBlocked || isSystem">
-        <BlockedMessage :risk-score="message.risk_score" :show-details="showRisk" />
-      </div>
-
-      <div v-else :class="bubbleClass">
-        <p class="whitespace-pre-wrap">{{ message.content }}</p>
-
-        <div v-if="isAssistant && isReviewed" class="mt-2 flex items-center text-[10px] font-medium text-amber-600 uppercase tracking-wider">
-          <CheckCircle2 class="w-3 h-3 mr-1" />
-          Проверено шлюзом
+  <div :class="containerClass" class="message-transition">
+    <div 
+      class="flex max-w-[85%] sm:max-w-[75%]"
+      :class="isUser ? 'flex-row-reverse' : 'flex-row'"
+    >
+      <!-- Avatar -->
+      <div 
+        class="flex-shrink-0 mt-1"
+        :class="isUser ? 'ml-3' : 'mr-3'"
+      >
+        <div 
+          class="w-8 h-8 rounded-xl flex items-center justify-center border transition-all duration-300"
+          :class="isUser 
+            ? 'bg-indigo-50 border-indigo-100 text-indigo-600' 
+            : 'bg-white/80 border-slate-100 text-slate-500 shadow-sm'"
+        >
+          <User v-if="isUser" class="w-4 h-4" />
+          <Bot v-else class="w-4 h-4" />
         </div>
       </div>
 
-      <div class="mt-1 flex items-center space-x-2 text-[10px] text-stone-400">
-        <span>{{ formatDateTime(message.created_at) }}</span>
+      <!-- Content -->
+      <div class="flex flex-col" :class="isUser ? 'items-end' : 'items-start'">
+        <div :class="[bubbleClass, 'px-5 py-3.5 relative']">
+          <p class="text-[15px] leading-relaxed whitespace-pre-wrap font-medium">
+            {{ message.content }}
+          </p>
 
-        <template v-if="!isUser && !isBlocked && showRisk && message.risk_score !== undefined">
-          <span>·</span>
-          <RiskBadge :score="message.risk_score" :show-label="false" />
-        </template>
-      </div>
-    </div>
+          <!-- Blocked Overlay/Icon -->
+          <div 
+            v-if="isBlocked" 
+            class="absolute -top-2 -right-2 bg-rose-500 text-white p-1 rounded-full shadow-lg border-2 border-white"
+          >
+            <ShieldAlert class="w-3.5 h-3.5" />
+          </div>
+        </div>
 
-    <div v-if="isUser" class="ml-3 flex-shrink-0">
-      <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-200">
-        <User class="w-4 h-4 text-emerald-600" />
+        <!-- Meta Info (Risk, Timestamp) -->
+        <div 
+          v-if="!isUser && showRisk" 
+          class="flex items-center space-x-3 mt-2 px-1"
+        >
+          <div class="flex items-center space-x-1.5 bg-white/40 px-2 py-0.5 rounded-lg border border-white/60">
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Security Scan</span>
+            <RiskBadge :level="message.risk_level" />
+          </div>
+          
+          <div v-if="isBlocked" class="flex items-center space-x-1 text-rose-500 font-bold text-[10px] uppercase tracking-wider">
+            <AlertTriangle class="w-3 h-3" />
+            <span>Policy Violation</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

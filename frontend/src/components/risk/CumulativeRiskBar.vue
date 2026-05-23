@@ -1,56 +1,70 @@
 <script setup>
 import { computed } from 'vue'
-import { formatPercent } from '@/utils/formatters'
+import { Shield, ShieldAlert, ShieldCheck } from 'lucide-vue-next'
 
 const props = defineProps({
   risk: {
     type: Number,
-    default: 0
+    required: true
   }
 })
 
-const safeRisk = computed(() => props.risk || 0)
+const riskLevel = computed(() => {
+  if (props.risk >= 0.7) return 'high'
+  if (props.risk >= 0.3) return 'medium'
+  return 'low'
+})
 
-const percentage = computed(() => Math.min(safeRisk.value * 100, 100))
+const statusLabel = computed(() => {
+  if (riskLevel.value === 'high') return 'Critical Risk'
+  if (riskLevel.value === 'medium') return 'Elevated Risk'
+  return 'Secure'
+})
 
-const isCritical = computed(() => safeRisk.value >= 0.8)
+const colorClass = computed(() => {
+  if (riskLevel.value === 'high') return 'bg-rose-500 shadow-rose-500/50'
+  if (riskLevel.value === 'medium') return 'bg-amber-500 shadow-amber-500/50'
+  return 'bg-emerald-500 shadow-emerald-500/50'
+})
 </script>
 
 <template>
-  <div class="w-full">
-    <div class="flex justify-between items-center mb-1.5">
-      <div class="flex items-center space-x-2">
-        <span class="text-xs font-medium text-stone-500">Накопительный риск сессии</span>
-        <div class="hidden sm:flex items-center space-x-3 text-[9px] text-stone-300 font-mono">
-          <span>0</span>
-          <span class="flex-1 border-t border-stone-200 mx-1"></span>
-          <span>0.5</span>
-          <span class="flex-1 border-t border-stone-200 mx-1"></span>
-          <span>1.0</span>
-        </div>
+  <div class="flex items-center justify-between px-2 py-2">
+    <div class="flex items-center space-x-3">
+      <!-- Ambient Glow Indicator -->
+      <div class="relative flex items-center justify-center">
+        <div 
+          class="w-2.5 h-2.5 rounded-full transition-all duration-1000 animate-pulse shadow-[0_0_12px_rgba(0,0,0,0.1)]"
+          :class="colorClass"
+        ></div>
+        <div 
+          class="absolute w-5 h-5 rounded-full opacity-20 transition-all duration-1000"
+          :class="colorClass"
+        ></div>
       </div>
-      <span :class="['text-xs font-mono font-bold', safeRisk >= 0.8 ? 'text-red-600' : 'text-stone-600']">
-        {{ safeRisk.toFixed(2) }}
-      </span>
+      
+      <div class="flex flex-col">
+        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">Security Status</span>
+        <span 
+          class="text-xs font-bold transition-colors duration-500"
+          :class="{
+            'text-rose-600': riskLevel === 'high',
+            'text-amber-600': riskLevel === 'medium',
+            'text-emerald-600': riskLevel === 'low'
+          }"
+        >
+          {{ statusLabel }}
+        </span>
+      </div>
     </div>
-    <div class="relative h-2.5 w-full bg-stone-200 rounded-full overflow-hidden">
-      <div
-        class="absolute inset-0 bg-gradient-to-r from-green-400 via-amber-400 to-red-500 opacity-20"
+
+    <!-- Minimal Risk Track -->
+    <div class="w-32 h-1 bg-slate-100 rounded-full overflow-hidden relative">
+      <div 
+        class="absolute top-0 left-0 h-full transition-all duration-1000 ease-out"
+        :class="colorClass"
+        :style="{ width: `${risk * 100}%` }"
       ></div>
-      <div
-        class="relative h-full transition-all duration-700 ease-out rounded-full"
-        :class="{
-          'bg-gradient-to-r from-green-500 via-amber-500 to-red-500': isCritical,
-          'bg-gradient-to-r from-green-400 via-amber-400 to-red-400': !isCritical,
-          'animate-glow': isCritical
-        }"
-        :style="{ width: `${percentage}%` }"
-      ></div>
-    </div>
-    <div class="flex justify-between mt-0.5">
-      <span class="text-[9px] text-stone-300 font-mono">0</span>
-      <span class="text-[9px] text-stone-300 font-mono">0.5</span>
-      <span class="text-[9px] text-stone-300 font-mono">1.0</span>
     </div>
   </div>
 </template>

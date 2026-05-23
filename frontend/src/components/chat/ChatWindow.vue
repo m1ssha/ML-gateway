@@ -41,7 +41,6 @@ const handleSendMessage = async (text) => {
   try {
     const response = await chatStore.sendMessage(sessionStore.currentSessionId, text)
     sessionStore.updateFromChatResponse(response)
-
     await sessionStore.loadSession(sessionStore.currentSessionId)
   } catch (error) {
     console.error('Send error:', error)
@@ -54,27 +53,35 @@ const isInputDisabled = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full max-w-4xl mx-auto bg-white shadow-lg border-x border-stone-200">
-    <SessionPanel
-      :session-id="sessionStore.currentSessionId"
-      :created-at="sessionStore.createdAt"
-      :is-blocked="sessionStore.isBlocked"
-      @new="createNewSession"
-    />
-
-    <div class="sticky top-0 z-10 px-4 py-2 bg-stone-50/90 backdrop-blur-sm border-b border-stone-100">
-      <CumulativeRiskBar :risk="sessionStore.cumulativeRisk" />
+  <div class="flex flex-col h-full w-full glass-panel rounded-3xl overflow-hidden relative shadow-2xl border-white/50">
+    <!-- Top Session Info -->
+    <div class="z-20">
+      <SessionPanel
+        :session-id="sessionStore.currentSessionId"
+        :created-at="sessionStore.createdAt"
+        :is-blocked="sessionStore.isBlocked"
+        @new="createNewSession"
+      />
+      <div class="px-6 py-1">
+        <CumulativeRiskBar :risk="sessionStore.cumulativeRisk" />
+      </div>
     </div>
 
-    <MessageList
-      :messages="chatStore.messages"
-      :is-loading="chatStore.isLoading"
-      :show-risk="showRiskDetails"
-    />
+    <!-- Message Area -->
+    <div class="flex-1 overflow-hidden relative">
+      <MessageList
+        :messages="chatStore.messages"
+        :is-loading="chatStore.isLoading"
+        :show-risk="showRiskDetails"
+      />
+    </div>
 
-    <MessageInput
-      :disabled="isInputDisabled"
-      @send="handleSendMessage"
-    />
+    <!-- Input Area -->
+    <div class="p-6 pt-2 bg-white/30 backdrop-blur-md border-t border-white/20">
+      <MessageInput
+        :disabled="isInputDisabled"
+        @send="handleSendMessage"
+      />
+    </div>
   </div>
 </template>
