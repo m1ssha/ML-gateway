@@ -14,7 +14,7 @@ from app.core.session_manager import session_manager
 
 router = APIRouter(prefix="/sessions", tags=["sessions"])
 
-@router.post("/", response_model=SessionCreateResponse)
+@router.post("", response_model=SessionCreateResponse)
 async def create_session(request: SessionCreateRequest):
     session_id = await session_manager.create_session(request.user_id)
     return {"session_id": session_id, "created_at": uuid.uuid4().hex} # Mock created_at for simple response

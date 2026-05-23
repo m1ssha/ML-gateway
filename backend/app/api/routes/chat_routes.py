@@ -5,7 +5,7 @@ from app.core.session_manager import session_manager
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
-@router.post("/", response_model=ChatResponse)
+@router.post("", response_model=ChatResponse)
 async def process_message(request: ChatRequest):
     """
     Основной эндпоинт для обработки сообщений чата.
