@@ -7,4 +7,3 @@ __pycache__/
 ml-artifacts/
 node_modules/
 dist/
-opencode.json
