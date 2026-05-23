@@ -11,7 +11,7 @@ class LLMProvider(str, Enum):
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
-    APP_NAME: str = "ML Gateway"
+    APP_NAME: str = "Gateway"
     DEBUG: bool = False
 
     # Database

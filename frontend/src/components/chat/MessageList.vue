@@ -27,7 +27,7 @@ const { containerRef } = useAutoScroll(() => props.messages.length)
       </div>
       <div class="empty-text">
         <h3>История сообщений пуста</h3>
-        <p>Отправьте сообщение, чтобы начать безопасную сессию через ML Gateway.</p>
+        <p>Отправьте сообщение, чтобы начать новую сессию</p>
       </div>
     </div>
 

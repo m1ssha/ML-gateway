@@ -63,7 +63,7 @@ const isInputDisabled = computed(() => {
           @new="createNewSession"
         />
         <div class="risk-monitor">
-          <span class="risk-label">Кумулятивный риск</span>
+          <span class="risk-label">Уровень риска</span>
           <CumulativeRiskBar :risk="sessionStore.cumulativeRisk" />
         </div>
       </div>
