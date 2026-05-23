@@ -40,9 +40,9 @@ watch(text, adjustHeight)
 </script>
 
 <template>
-  <div class="p-4 bg-white border-t border-slate-100">
-    <div 
-      class="relative flex items-end space-x-2 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 transition-all duration-200 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100"
+  <div class="p-4 bg-white border-t border-stone-100">
+    <div
+      class="relative flex items-end space-x-2 bg-stone-50 border border-stone-200 rounded-2xl px-4 py-2 transition-all duration-200 focus-within:border-emerald-400 focus-within:ring-2 focus-within:ring-emerald-100"
       :class="{ 'opacity-50 pointer-events-none': disabled }"
     >
       <textarea
@@ -50,14 +50,14 @@ watch(text, adjustHeight)
         v-model="text"
         rows="1"
         :placeholder="placeholder"
-        class="w-full bg-transparent border-none focus:ring-0 resize-none py-1.5 text-sm text-slate-700 placeholder:text-slate-400"
+        class="w-full bg-transparent border-none focus:ring-0 resize-none py-1.5 text-sm text-stone-700 placeholder:text-stone-400"
         @keydown="handleKeydown"
       ></textarea>
-      
-      <button 
-        class="flex-shrink-0 p-1.5 rounded-xl transition-colors"
+
+      <button
+        class="flex-shrink-0 p-1.5 rounded-xl transition-all duration-200"
         :class="[
-          text.trim() ? 'bg-blue-600 text-white hover:bg-blue-700' : 'text-slate-400'
+          text.trim() ? 'bg-emerald-600 text-white hover:bg-emerald-700 hover:scale-105 active:scale-95' : 'text-stone-400'
         ]"
         :disabled="!text.trim() || disabled"
         @click="send"

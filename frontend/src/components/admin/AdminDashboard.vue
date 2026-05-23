@@ -40,36 +40,33 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="h-full overflow-y-auto bg-slate-50 p-6">
+  <div class="h-full overflow-y-auto bg-stone-50 p-6">
     <div class="max-w-7xl mx-auto space-y-8">
-      <!-- Header -->
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="text-2xl font-bold text-slate-900">Административная панель</h2>
-          <p class="text-slate-500 text-sm mt-1">Мониторинг безопасности и статистика шлюза</p>
+          <h2 class="text-2xl font-bold text-stone-800 tracking-tight">Административная панель</h2>
+          <p class="text-stone-400 text-sm mt-1">Мониторинг безопасности и статистика шлюза</p>
         </div>
-        
+
         <div class="flex items-center space-x-4">
-          <label class="flex items-center space-x-2 text-xs font-medium text-slate-500 cursor-pointer">
-            <input type="checkbox" v-model="autoRefresh" class="rounded text-blue-600 focus:ring-blue-500">
+          <label class="flex items-center space-x-2 text-xs font-medium text-stone-500 cursor-pointer">
+            <input type="checkbox" v-model="autoRefresh" class="rounded text-emerald-600 focus:ring-emerald-500">
             <span>Автообновление (10с)</span>
           </label>
-          <button 
-            @click="fetchData" 
-            class="p-2 bg-white border border-slate-200 rounded-lg shadow-sm hover:bg-slate-50 transition-colors"
+          <button
+            @click="fetchData"
+            class="p-2 bg-white border border-stone-200 rounded-lg shadow-sm hover:bg-stone-50 transition-colors"
             :disabled="isLoading"
           >
-            <RefreshCcw class="w-4 h-4 text-slate-600" :class="{ 'animate-spin': isLoading }" />
+            <RefreshCcw class="w-4 h-4 text-stone-500" :class="{ 'animate-spin': isLoading }" />
           </button>
         </div>
       </div>
 
-      <!-- Stats -->
       <StatsCards :stats="stats" />
 
-      <!-- Logs Section -->
       <div class="space-y-4">
-        <h3 class="text-lg font-bold text-slate-900">Журнал событий</h3>
+        <h3 class="text-lg font-bold text-stone-800">Журнал событий</h3>
         <EventLogTable :logs="logs" />
       </div>
     </div>

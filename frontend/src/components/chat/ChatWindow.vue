@@ -35,15 +35,13 @@ const handleSendMessage = async (text) => {
   if (!sessionStore.currentSessionId) {
     await createNewSession()
   }
-  
+
   chatStore.addUserMessage(text)
-  
+
   try {
     const response = await chatStore.sendMessage(sessionStore.currentSessionId, text)
     sessionStore.updateFromChatResponse(response)
-    
-    // After message, refresh history to get updated cumulative risk
-    // This is a bit inefficient but ensures sync with backend logic
+
     await sessionStore.loadSession(sessionStore.currentSessionId)
   } catch (error) {
     console.error('Send error:', error)
@@ -56,25 +54,25 @@ const isInputDisabled = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full max-w-4xl mx-auto bg-white shadow-xl border-x border-slate-200">
-    <SessionPanel 
+  <div class="flex flex-col h-full max-w-4xl mx-auto bg-white shadow-lg border-x border-stone-200">
+    <SessionPanel
       :session-id="sessionStore.currentSessionId"
       :created-at="sessionStore.createdAt"
       :is-blocked="sessionStore.isBlocked"
       @new="createNewSession"
     />
-    
-    <div class="px-4 py-2 bg-slate-50 border-b border-slate-100">
+
+    <div class="sticky top-0 z-10 px-4 py-2 bg-stone-50/90 backdrop-blur-sm border-b border-stone-100">
       <CumulativeRiskBar :risk="sessionStore.cumulativeRisk" />
     </div>
 
-    <MessageList 
+    <MessageList
       :messages="chatStore.messages"
       :is-loading="chatStore.isLoading"
       :show-risk="showRiskDetails"
     />
 
-    <MessageInput 
+    <MessageInput
       :disabled="isInputDisabled"
       @send="handleSendMessage"
     />
