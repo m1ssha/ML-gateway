@@ -61,8 +61,8 @@ export const useChatStore = defineStore('chat', {
       this.isLoading = true
       try {
         const data = await sessionService.getSessionHistory(sessionId)
-        this.messages = data.messages
-        this.lastRiskScore = this.messages.length > 0 ? this.messages[this.messages.length - 1].risk_score : 0
+        this.messages = data.history
+        this.lastRiskScore = this.messages.length > 0 ? (this.messages[this.messages.length - 1].risk_score || 0) : 0
       } catch (error) {
         this.error = 'Ошибка загрузки истории'
         console.error(error)
