@@ -7,8 +7,8 @@ class Settings(BaseSettings):
     
     CONFIG_FILENAME: str = "config.json"
     TOKENIZER_FILENAME: str = "tokenizer.json"
-    TOKENIZER_CONFIG_FILENAME: str = "tokenizer-config.json"
-    WEIGHTS_FILENAME: str = "model-weights.pt"
+    TOKENIZER_CONFIG_FILENAME: str = "tokenizer_config.json"
+    WEIGHTS_FILENAME: str = "model_weights.pt"
     
     MAX_LENGTH: int = 512
     ATTACK_THRESHOLD: float = 0.5
