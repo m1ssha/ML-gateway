@@ -39,6 +39,8 @@ class OpenRouterAdapter(BaseLLMAdapter):
             "temperature": 0.7,
             "max_tokens": 2048
         }
+        
+        logger.info(f"DEBUG: Sending request to OpenRouter. Model: {self.model_id}")
 
         retries = 0
         while retries <= self.max_retries:
