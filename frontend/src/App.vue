@@ -12,7 +12,7 @@ const route = useRoute()
         <div class="brand">
           <ShieldCheck class="brand-icon" />
           <div class="brand-text">
-            <span class="brand-title">ML Gateway</span>
+            <span class="brand-title">Gateway</span>
             <span class="brand-subtitle">Безопасный доступ</span>
           </div>
         </div>
