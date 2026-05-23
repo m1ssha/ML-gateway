@@ -54,6 +54,10 @@ class OpenRouterAdapter(BaseLLMAdapter):
                         timeout=self.timeout
                     )
                     
+                    if response.status_code != 200:
+                        print(f"DEBUG: OpenRouter Error Response! Status: {response.status_code}")
+                        print(f"DEBUG: Response Body: {response.text}")
+
                     if response.status_code == 429:
                         # Rate Limit: exponential backoff (1 retry)
                         if retries < self.max_retries:
