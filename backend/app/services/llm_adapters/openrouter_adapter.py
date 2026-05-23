@@ -37,7 +37,8 @@ class OpenRouterAdapter(BaseLLMAdapter):
             "model": self.model_id,
             "messages": messages,
             "temperature": 0.7,
-            "max_tokens": 2048
+            "max_tokens": 2048,
+            "reasoning": {"enabled": True}
         }
         
         print(f"DEBUG: Sending request to OpenRouter. Model: {self.model_id}")
@@ -83,8 +84,12 @@ class OpenRouterAdapter(BaseLLMAdapter):
                     if "choices" not in data or not data["choices"]:
                         logger.error(f"Invalid response from OpenRouter: {data}")
                         raise LLMProviderError("Invalid response format from OpenRouter")
-                        
-                    return data["choices"][0]["message"]["content"]
+                    
+                    # Extract message data
+                    message_data = data["choices"][0]["message"]
+                    # For future history, we might need reasoning_details, 
+                    # but for now we return only content as per interface.
+                    return message_data.get("content") or ""
 
             except httpx.TimeoutException:
                 logger.error(f"Timeout while calling OpenRouter (retry {retries}/{self.max_retries})")
