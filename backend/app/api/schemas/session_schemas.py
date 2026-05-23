@@ -17,4 +17,6 @@ class MessageSchema(BaseModel):
 
 class SessionHistoryResponse(BaseModel):
     session_id: uuid.UUID
+    cumulative_risk: float
+    is_blocked: bool
     history: list[MessageSchema]

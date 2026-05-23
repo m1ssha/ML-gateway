@@ -71,7 +71,7 @@ class SessionManager:
                     session_id, current_step, "user", user_message, 
                     risk_score, is_attack, decision.status
                 )
-                return self._blocked_response(session_id, current_step, "Request blocked by safety policy", risk_score, is_attack)
+                return self._blocked_response(session_id, current_step, "Request blocked by safety policy", risk_score, is_attack, new_cumulative_risk)
 
             # 7. Вызов LLM
             # Формируем историю для адаптера (OpenAI формат)
@@ -111,16 +111,18 @@ class SessionManager:
                 "status": decision.status,
                 "reply": llm_reply,
                 "risk_score": risk_score,
+                "cumulative_risk": new_cumulative_risk,
                 "is_attack": is_attack
             }
 
-    def _blocked_response(self, session_id, step, reason, risk_score=1.0, is_attack=True):
+    def _blocked_response(self, session_id, step, reason, risk_score=1.0, is_attack=True, cumulative_risk=0.0):
         return {
             "session_id": str(session_id),
             "step": step,
             "status": "blocked",
             "reply": settings.SAFE_NOTIFICATION,
             "risk_score": risk_score,
+            "cumulative_risk": cumulative_risk,
             "is_attack": is_attack,
             "reason": reason
         }

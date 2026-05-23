@@ -12,4 +12,5 @@ class ChatResponse(BaseModel):
     status: str # 'passed', 'reviewed', 'blocked'
     reply: str
     risk_score: float
+    cumulative_risk: float
     is_attack: bool

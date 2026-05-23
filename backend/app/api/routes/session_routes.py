@@ -28,11 +28,19 @@ async def create_session(request: SessionCreateRequest):
 
 @router.get("/{session_id}/history", response_model=SessionHistoryResponse)
 async def get_history(session_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
+    session_repo = SessionRepository(db)
     message_repo = MessageRepository(db)
+    
+    session = await session_repo.get_by_id(session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+        
     history = await message_repo.get_session_history(session_id, limit=50)
     
     return {
         "session_id": session_id,
+        "cumulative_risk": session.cumulative_risk,
+        "is_blocked": session.is_blocked,
         "history": [
             MessageSchema(
                 role=m.role, 

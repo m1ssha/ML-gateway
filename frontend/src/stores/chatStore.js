@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import chatService from '@/services/chatService'
 import sessionService from '@/services/sessionService'
+import { useSessionStore } from './sessionStore'
 
 export const useChatStore = defineStore('chat', {
   state: () => ({
@@ -31,11 +32,19 @@ export const useChatStore = defineStore('chat', {
       this.isLoading = true
       this.error = null
       
+      const sessionStore = useSessionStore()
+      
       // Optimistic UI: user message already added by component
       
       try {
         const data = await chatService.sendMessage(sessionId, content)
         this.lastRiskScore = data.risk_score
+        
+        // Update session store with new cumulative risk
+        sessionStore.cumulativeRisk = data.cumulative_risk
+        if (data.status === 'blocked') {
+          sessionStore.isBlocked = true
+        }
         
         this.messages.push({
           id: Date.now().toString() + '-ai',

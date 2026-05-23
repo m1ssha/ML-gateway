@@ -5,30 +5,32 @@ import { formatPercent } from '@/utils/formatters'
 const props = defineProps({
   risk: {
     type: Number,
-    required: true
+    default: 0
   }
 })
 
+const safeRisk = computed(() => props.risk || 0)
+
 const percentage = computed(() => {
   // We normalize to 1.0 for the bar, but it can go higher
-  return Math.min(props.risk * 100, 100)
+  return Math.min(safeRisk.value * 100, 100)
 })
 
 const barColor = computed(() => {
-  if (props.risk >= 1.0) return 'bg-red-500'
-  if (props.risk >= 0.5) return 'bg-orange-500'
+  if (safeRisk.value >= 1.0) return 'bg-red-500'
+  if (safeRisk.value >= 0.5) return 'bg-orange-500'
   return 'bg-green-500'
 })
 
-const isCritical = computed(() => props.risk >= 0.8)
+const isCritical = computed(() => safeRisk.value >= 0.8)
 </script>
 
 <template>
   <div class="w-full">
     <div class="flex justify-between items-center mb-1">
       <span class="text-xs font-medium text-slate-500">Накопительный риск сессии</span>
-      <span :class="['text-xs font-bold', risk >= 0.8 ? 'text-red-600' : 'text-slate-700']">
-        {{ risk.toFixed(2) }}
+      <span :class="['text-xs font-bold', safeRisk >= 0.8 ? 'text-red-600' : 'text-slate-700']">
+        {{ safeRisk.toFixed(2) }}
       </span>
     </div>
     <div class="h-2 w-full bg-slate-200 rounded-full overflow-hidden">
