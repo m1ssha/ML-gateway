@@ -21,7 +21,7 @@ const props = defineProps({
         <BarChart3 class="stat-icon" />
       </div>
       <div class="stat-info">
-        <div class="stat-label">Total Requests</div>
+        <div class="stat-label">Всего запросов</div>
         <div class="stat-value">{{ stats.total_requests || 0 }}</div>
       </div>
     </div>
@@ -31,7 +31,7 @@ const props = defineProps({
         <ShieldAlert class="stat-icon" />
       </div>
       <div class="stat-info">
-        <div class="stat-label">Blocked</div>
+        <div class="stat-label">Заблокировано</div>
         <div class="stat-value">{{ stats.blocked_requests || 0 }}</div>
       </div>
     </div>
@@ -41,7 +41,7 @@ const props = defineProps({
         <ShieldCheck class="stat-icon" />
       </div>
       <div class="stat-info">
-        <div class="stat-label">Avg. Risk</div>
+        <div class="stat-label">Средний риск</div>
         <div class="stat-value">{{ (stats.avg_risk_score || 0).toFixed(2) }}</div>
       </div>
     </div>
@@ -51,7 +51,7 @@ const props = defineProps({
         <Users class="stat-icon" />
       </div>
       <div class="stat-info">
-        <div class="stat-label">Active Sessions</div>
+        <div class="stat-label">Активных сессий</div>
         <div class="stat-value">{{ stats.active_sessions || 0 }}</div>
       </div>
     </div>

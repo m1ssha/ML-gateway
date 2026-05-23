@@ -30,10 +30,10 @@ const isBlocked = computed(() => props.message.is_blocked)
       
       <div class="message-content">
         <div class="message-header">
-          <span class="role-name">{{ isUser ? 'User' : 'Assistant' }}</span>
+          <span class="role-name">{{ isUser ? 'Пользователь' : 'Ассистент' }}</span>
           <div v-if="isBlocked" class="blocked-indicator">
             <ShieldAlert class="indicator-icon" />
-            <span>Blocked</span>
+            <span>Заблокировано</span>
           </div>
         </div>
 
@@ -43,12 +43,12 @@ const isBlocked = computed(() => props.message.is_blocked)
 
         <div v-if="!isUser && showRisk" class="message-footer">
           <div class="security-info">
-            <span class="security-label">Security Scan:</span>
+            <span class="security-label">Проверка безопасности:</span>
             <RiskBadge :level="message.risk_level" />
           </div>
           <div v-if="isBlocked" class="policy-alert">
             <AlertTriangle class="alert-icon" />
-            <span>Policy Violation Detected</span>
+            <span>Обнаружено нарушение политики</span>
           </div>
         </div>
       </div>

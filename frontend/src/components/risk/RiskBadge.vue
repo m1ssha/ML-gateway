@@ -20,9 +20,9 @@ const badgeStyle = computed(() => {
 })
 
 const label = computed(() => {
-  if (props.level === 'high') return 'HIGH RISK'
-  if (props.level === 'medium') return 'MEDIUM RISK'
-  return 'LOW RISK'
+  if (props.level === 'high') return 'ВЫСОКИЙ РИСК'
+  if (props.level === 'medium') return 'СРЕДНИЙ РИСК'
+  return 'НИЗКИЙ РИСК'
 })
 </script>
 

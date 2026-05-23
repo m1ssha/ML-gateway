@@ -26,8 +26,8 @@ const { containerRef } = useAutoScroll(() => props.messages.length)
         <MessageSquare class="empty-icon" />
       </div>
       <div class="empty-text">
-        <h3>No conversation history</h3>
-        <p>Send a message to start a secure session via the ML Gateway.</p>
+        <h3>История сообщений пуста</h3>
+        <p>Отправьте сообщение, чтобы начать безопасную сессию через ML Gateway.</p>
       </div>
     </div>
 

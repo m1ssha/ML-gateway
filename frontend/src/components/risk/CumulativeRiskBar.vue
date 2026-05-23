@@ -15,9 +15,9 @@ const riskLevel = computed(() => {
 })
 
 const statusLabel = computed(() => {
-  if (riskLevel.value === 'high') return 'CRITICAL'
-  if (riskLevel.value === 'medium') return 'ELEVATED'
-  return 'SECURE'
+  if (riskLevel.value === 'high') return 'КРИТИЧЕСКИЙ'
+  if (riskLevel.value === 'medium') return 'ПОВЫШЕННЫЙ'
+  return 'БЕЗОПАСНО'
 })
 
 const colorVar = computed(() => {

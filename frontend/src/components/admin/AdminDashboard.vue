@@ -48,8 +48,8 @@ onUnmounted(() => {
             <Activity class="title-icon" />
           </div>
           <div class="title-text">
-            <h1>Admin Console</h1>
-            <p>Security monitoring and system analytics</p>
+            <h1>Панель управления</h1>
+            <p>Мониторинг безопасности и системная аналитика</p>
           </div>
         </div>
 
@@ -60,7 +60,7 @@ onUnmounted(() => {
               v-model="autoRefresh" 
               class="checkbox-input"
             >
-            <span class="checkbox-label">Auto-refresh (10s)</span>
+            <span class="checkbox-label">Автообновление (10с)</span>
           </label>
           <button
             @click="fetchData"
@@ -68,7 +68,7 @@ onUnmounted(() => {
             :disabled="isLoading"
           >
             <RefreshCcw class="btn-icon" :class="{ 'is-spinning': isLoading }" />
-            <span>Sync</span>
+            <span>Синхр.</span>
           </button>
         </div>
       </div>
@@ -82,7 +82,7 @@ onUnmounted(() => {
       <section class="admin-section">
         <div class="section-header">
           <div class="accent-bar"></div>
-          <h2>System Event Log</h2>
+          <h2>Журнал системных событий</h2>
         </div>
         <div class="table-container">
           <EventLogTable :logs="logs" />

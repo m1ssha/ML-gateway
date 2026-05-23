@@ -13,7 +13,7 @@ const route = useRoute()
           <ShieldCheck class="brand-icon" />
           <div class="brand-text">
             <span class="brand-title">ML Gateway</span>
-            <span class="brand-subtitle">Secure access</span>
+            <span class="brand-subtitle">Безопасный доступ</span>
           </div>
         </div>
       </div>
@@ -25,7 +25,7 @@ const route = useRoute()
           :class="{ active: route.path === '/' }"
         >
           <MessageSquare class="nav-icon" />
-          <span>Chat</span>
+          <span>Чат</span>
         </RouterLink>
         <RouterLink 
           to="/admin" 
@@ -33,7 +33,7 @@ const route = useRoute()
           :class="{ active: route.path === '/admin' }"
         >
           <LayoutDashboard class="nav-icon" />
-          <span>Admin</span>
+          <span>Админ-панель</span>
         </RouterLink>
       </nav>
 

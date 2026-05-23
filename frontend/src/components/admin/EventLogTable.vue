@@ -24,12 +24,12 @@ const getDecisionClass = (decision) => {
     <table class="data-table">
       <thead>
         <tr>
-          <th>Timestamp</th>
-          <th>Session</th>
-          <th>Role</th>
-          <th>Content Snippet</th>
-          <th>Risk</th>
-          <th>Status</th>
+          <th>Время</th>
+          <th>Сессия</th>
+          <th>Роль</th>
+          <th>Содержимое</th>
+          <th>Риск</th>
+          <th>Статус</th>
         </tr>
       </thead>
       <tbody>
@@ -42,7 +42,7 @@ const getDecisionClass = (decision) => {
           </td>
           <td class="cell-role">
             <span class="role-badge" :class="log.role">
-              {{ log.role }}
+              {{ log.role === 'user' ? 'польз.' : 'ассист.' }}
             </span>
           </td>
           <td class="cell-content">
@@ -56,13 +56,13 @@ const getDecisionClass = (decision) => {
           </td>
           <td class="cell-status">
             <span class="decision-badge" :class="getDecisionClass(log.decision)">
-              {{ log.decision || 'N/A' }}
+              {{ log.decision === 'passed' ? 'ПРОШЛО' : (log.decision === 'blocked' ? 'БЛОК' : (log.decision === 'reviewed' ? 'ОБЗОР' : 'Н/Д')) }}
             </span>
           </td>
         </tr>
         <tr v-if="logs.length === 0">
           <td colspan="6" class="empty-table">
-            No system events recorded.
+            Системные события не зарегистрированы.
           </td>
         </tr>
       </tbody>

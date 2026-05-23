@@ -39,7 +39,7 @@ const handleSend = () => {
         ref="textareaRef"
         v-model="message"
         rows="1"
-        placeholder="Send a message..."
+        placeholder="Введите сообщение..."
         class="input-textarea"
         :disabled="disabled"
         @keydown.enter.prevent="handleSend"
@@ -55,7 +55,7 @@ const handleSend = () => {
       </button>
     </div>
     <div class="input-hint">
-      Press Enter to send, Shift + Enter for new line
+      Нажмите Enter для отправки, Shift + Enter для новой строки
     </div>
   </div>
 </template>

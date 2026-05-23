@@ -63,7 +63,7 @@ const isInputDisabled = computed(() => {
           @new="createNewSession"
         />
         <div class="risk-monitor">
-          <span class="risk-label">Cumulative Risk</span>
+          <span class="risk-label">Кумулятивный риск</span>
           <CumulativeRiskBar :risk="sessionStore.cumulativeRisk" />
         </div>
       </div>
@@ -86,10 +86,10 @@ const isInputDisabled = computed(() => {
           @send="handleSendMessage"
         />
         <div class="footer-note" v-if="sessionStore.isBlocked">
-          This session has been blocked due to security policy violations.
+          Эта сессия была заблокирована из-за нарушения политики безопасности.
         </div>
         <div class="footer-note" v-else>
-          Gateway provides filtered access to LLM services.
+          Шлюз обеспечивает фильтрованный доступ к сервисам LLM.
         </div>
       </div>
     </footer>

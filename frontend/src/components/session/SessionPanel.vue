@@ -30,8 +30,8 @@ const formatDate = (dateStr) => {
       </div>
       <div class="session-details">
         <div class="session-label">
-          <span>Active Session</span>
-          <span v-if="isBlocked" class="blocked-badge">Blocked</span>
+          <span>Активная сессия</span>
+          <span v-if="isBlocked" class="blocked-badge">Заблокирована</span>
         </div>
         <div class="session-meta">
           <code class="session-id">{{ sessionId?.slice(0, 8) }}</code>
@@ -44,10 +44,10 @@ const formatDate = (dateStr) => {
     <button
       @click="emit('new')"
       class="new-session-btn"
-      title="Start New Session"
+      title="Начать новую сессию"
     >
       <Plus class="btn-icon" />
-      <span>New Session</span>
+      <span>Новая сессия</span>
     </button>
   </div>
 </template>
