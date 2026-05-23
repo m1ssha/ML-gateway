@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     ML_SERVICE_URL: str = "http://ml-service:8000/predict"
 
     # LLM Settings
-    LLM_PROVIDER: LLMProvider = LLMProvider.MOCK
+    LLM_PROVIDER: LLMProvider = LLMProvider.OPENROUTER
     LLM_MODEL: str = "qwen/qwen3.6-35b-a3b"
     LLM_TIMEOUT: float = 15.0
     LLM_MAX_RETRIES: int = 1

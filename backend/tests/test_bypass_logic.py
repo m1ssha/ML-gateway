@@ -45,7 +45,9 @@ async def test_bypass():
         response = await sm.process_chat_message(session_id, "First message")
         
         print(f"Response status: {response['status']}")
+        print(f"Model used: {response['model']}")
         assert response["status"] == "passed"
+        assert response["model"] == settings.LLM_MODEL
         assert mock_ml_predict.call_count == 0, "ML predict should NOT be called on step 1"
         assert mock_redis.delete.called, "Redis cache should be deleted"
         print("✅ Step 1 bypass confirmed")

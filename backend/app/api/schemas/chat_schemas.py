@@ -14,3 +14,4 @@ class ChatResponse(BaseModel):
     risk_score: float
     cumulative_risk: float
     is_attack: bool
+    model: str | None = None

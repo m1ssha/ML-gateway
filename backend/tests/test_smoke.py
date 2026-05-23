@@ -51,8 +51,10 @@ async def smoke_test():
         response = await sm.process_chat_message(session_id, "Hello, how are you?")
         print(f"Response status: {response['status']}")
         print(f"Reply: {response['reply']}")
+        print(f"Model used: {response['model']}")
         assert response["status"] == "passed"
         assert "safe assistant" in response["reply"]
+        assert response["model"] == settings.LLM_MODEL
 
         # Тест 2: Подозрительное сообщение (высокий риск)
         print("\nTest 2: Suspicious message")

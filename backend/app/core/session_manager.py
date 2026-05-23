@@ -124,7 +124,8 @@ class SessionManager:
                 "reply": llm_reply,
                 "risk_score": risk_score,
                 "cumulative_risk": new_cumulative_risk,
-                "is_attack": is_attack
+                "is_attack": is_attack,
+                "model": settings.LLM_MODEL
             }
 
     def _blocked_response(self, session_id, step, reason, risk_score=1.0, is_attack=True, cumulative_risk=0.0):
@@ -136,7 +137,8 @@ class SessionManager:
             "risk_score": risk_score,
             "cumulative_risk": cumulative_risk,
             "is_attack": is_attack,
-            "reason": reason
+            "reason": reason,
+            "model": settings.LLM_MODEL
         }
 
 session_manager = SessionManager()
