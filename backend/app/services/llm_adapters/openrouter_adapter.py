@@ -41,8 +41,7 @@ class OpenRouterAdapter(BaseLLMAdapter):
             "reasoning": {"enabled": True}
         }
         
-        print(f"DEBUG: Sending request to OpenRouter. Model: {self.model_id}")
-        print(f"DEBUG: Api key: {self.model.api_key}")
+        print(f"DEBUG: Sending request to OpenRouter. Model: {self.model_id}, {self.api_key}")
 
         retries = 0
         while retries <= self.max_retries:
