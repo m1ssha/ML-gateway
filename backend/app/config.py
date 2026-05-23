@@ -6,6 +6,7 @@ class LLMProvider(str, Enum):
     OPENAI = "openai"
     YANDEX = "yandex"
     GIGACHAT = "gigachat"
+    OPENROUTER = "openrouter"
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
@@ -24,7 +25,17 @@ class Settings(BaseSettings):
 
     # LLM Settings
     LLM_PROVIDER: LLMProvider = LLMProvider.MOCK
+    LLM_MODEL: str = "qwen/qwen3.6-35b-a3b"
+    LLM_TIMEOUT: float = 15.0
+    LLM_MAX_RETRIES: int = 1
+
+    # OpenAI Credentials
     OPENAI_API_KEY: str | None = None
+
+    # OpenRouter Credentials
+    OPENROUTER_API_KEY: str | None = None
+    HTTP_REFERER: str = "https://llm-gateway.local"
+    APP_TITLE: str = "LLM Security Gateway Prototype"
 
     # Gateway Thresholds
     THRESHOLD_LOW: float = 0.30
