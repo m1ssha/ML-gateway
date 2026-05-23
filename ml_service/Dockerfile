@@ -1,31 +1,36 @@
-# Stage 1: Build
-FROM python:3.11-slim as builder
+ARG BASE_IMAGE=python:3.11-slim
+FROM ${BASE_IMAGE} as builder
 
 WORKDIR /app
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir --user -r requirements.txt
+RUN pip install --user --no-cache-dir -r requirements.txt
 
-# Stage 2: Runtime
-FROM python:3.11-slim
+FROM ${BASE_IMAGE} as runtime
 
 WORKDIR /app
 
-# Copy installed packages from builder
-COPY --from=builder /root/.local /root/.local
-ENV PATH=/root/.local/bin:$PATH
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV PATH="/home/appuser/.local/bin:${PATH}"
 
-# Copy application code
-COPY app /app/app
-COPY ml-artifacts /app/ml-artifacts
+RUN useradd -m appuser
+USER appuser
 
-# Ensure the app can find the artifacts
-ENV PYTHONPATH=/app
-ENV ARTIFACTS_PATH=/app/ml-artifacts
+COPY --from=builder /root/.local /home/appuser/.local
+COPY --chown=appuser:appuser app/ ./app/
+COPY --chown=appuser:appuser ml-artifacts/ ./ml-artifacts/
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
 
 EXPOSE 8000
 

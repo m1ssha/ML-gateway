@@ -1,28 +1,41 @@
-# Dockerfile для ML Gateway Backend
+# Stage 1: Builder
 FROM python:3.11-slim as builder
 
 WORKDIR /app
 
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    libpq-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+RUN pip install --user --no-cache-dir -r requirements.txt
 
-FROM python:3.11-slim
+# Stage 2: Runtime
+FROM python:3.11-slim as runtime
 
 WORKDIR /app
 
-COPY --from=builder /install /usr/local
-RUN apt-get update && apt-get install -y libpq5 && rm -rf /var/lib/apt/lists/*
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV PATH="/home/appuser/.local/bin:${PATH}"
 
-COPY . .
+RUN useradd -m appuser
+USER appuser
 
-ENV PYTHONPATH=/app
-ENV PYTHONUNBUFFERED=1
+COPY --from=builder /root/.local /home/appuser/.local
+COPY --chown=appuser:appuser app/ ./app/
+COPY --chown=appuser:appuser alembic/ ./alembic/
+COPY --chown=appuser:appuser alembic.ini .
 
-EXPOSE 8000
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8001/health || exit 1
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+EXPOSE 8001
+
+# Entrypoint will be set in docker-compose for production to use the script
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8001"]
