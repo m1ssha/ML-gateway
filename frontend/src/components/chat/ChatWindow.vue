@@ -53,35 +53,114 @@ const isInputDisabled = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full w-full glass-panel rounded-3xl overflow-hidden relative shadow-2xl border-white/50">
-    <!-- Top Session Info -->
-    <div class="z-20">
-      <SessionPanel
-        :session-id="sessionStore.currentSessionId"
-        :created-at="sessionStore.createdAt"
-        :is-blocked="sessionStore.isBlocked"
-        @new="createNewSession"
-      />
-      <div class="px-6 py-1">
-        <CumulativeRiskBar :risk="sessionStore.cumulativeRisk" />
+  <div class="chat-window">
+    <header class="chat-header">
+      <div class="header-content">
+        <SessionPanel
+          :session-id="sessionStore.currentSessionId"
+          :created-at="sessionStore.createdAt"
+          :is-blocked="sessionStore.isBlocked"
+          @new="createNewSession"
+        />
+        <div class="risk-monitor">
+          <span class="risk-label">Cumulative Risk</span>
+          <CumulativeRiskBar :risk="sessionStore.cumulativeRisk" />
+        </div>
+      </div>
+    </header>
+
+    <div class="chat-main">
+      <div class="chat-scroll-area">
+        <MessageList
+          :messages="chatStore.messages"
+          :is-loading="chatStore.isLoading"
+          :show-risk="showRiskDetails"
+        />
       </div>
     </div>
 
-    <!-- Message Area -->
-    <div class="flex-1 overflow-hidden relative">
-      <MessageList
-        :messages="chatStore.messages"
-        :is-loading="chatStore.isLoading"
-        :show-risk="showRiskDetails"
-      />
-    </div>
-
-    <!-- Input Area -->
-    <div class="p-6 pt-2 bg-white/30 backdrop-blur-md border-t border-white/20">
-      <MessageInput
-        :disabled="isInputDisabled"
-        @send="handleSendMessage"
-      />
-    </div>
+    <footer class="chat-footer">
+      <div class="footer-content">
+        <MessageInput
+          :disabled="isInputDisabled"
+          @send="handleSendMessage"
+        />
+        <div class="footer-note" v-if="sessionStore.isBlocked">
+          This session has been blocked due to security policy violations.
+        </div>
+        <div class="footer-note" v-else>
+          Gateway provides filtered access to LLM services.
+        </div>
+      </div>
+    </footer>
   </div>
 </template>
+
+<style scoped>
+.chat-window {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: var(--color-white);
+}
+
+.chat-header {
+  border-bottom: 1px solid var(--color-gray-100);
+  padding: var(--space-4) var(--space-6);
+  z-index: 10;
+}
+
+.header-content {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.risk-monitor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 200px;
+}
+
+.risk-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-gray-500);
+}
+
+.chat-main {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.chat-scroll-area {
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
+}
+
+.chat-footer {
+  padding: var(--space-4) var(--space-6) var(--space-8);
+}
+
+.footer-content {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.footer-note {
+  font-size: 0.75rem;
+  color: var(--color-gray-400);
+  text-align: center;
+}
+</style>

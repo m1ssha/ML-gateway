@@ -40,51 +40,212 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="h-full overflow-y-auto glass-panel rounded-3xl p-8 relative shadow-2xl border-white/50">
-    <div class="max-w-7xl mx-auto space-y-10">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center space-x-4">
-          <div class="p-3 bg-indigo-600/10 rounded-2xl border border-indigo-600/20">
-            <Activity class="w-6 h-6 text-indigo-600" />
+  <div class="admin-page">
+    <header class="admin-header">
+      <div class="header-main">
+        <div class="page-title">
+          <div class="title-icon-box">
+            <Activity class="title-icon" />
           </div>
-          <div>
-            <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">Admin Console</h2>
-            <p class="text-slate-400 text-sm font-medium">Gateway security monitoring & system analytics</p>
+          <div class="title-text">
+            <h1>Admin Console</h1>
+            <p>Security monitoring and system analytics</p>
           </div>
         </div>
 
-        <div class="flex items-center space-x-6">
-          <label class="flex items-center space-x-3 text-[11px] font-bold text-slate-400 uppercase tracking-widest cursor-pointer group">
+        <div class="header-actions">
+          <label class="auto-refresh-toggle">
             <input 
               type="checkbox" 
               v-model="autoRefresh" 
-              class="w-4 h-4 rounded-md border-slate-200 text-indigo-600 focus:ring-indigo-500/20 transition-all cursor-pointer"
+              class="checkbox-input"
             >
-            <span class="group-hover:text-slate-600 transition-colors">Auto-refresh (10s)</span>
+            <span class="checkbox-label">Auto-refresh (10s)</span>
           </label>
           <button
             @click="fetchData"
-            class="p-2.5 bg-white/60 backdrop-blur-md border border-white rounded-xl shadow-sm hover:bg-white hover:shadow-md transition-all active:scale-95"
+            class="refresh-btn"
             :disabled="isLoading"
           >
-            <RefreshCcw class="w-4 h-4 text-slate-500" :class="{ 'animate-spin': isLoading }" />
+            <RefreshCcw class="btn-icon" :class="{ 'is-spinning': isLoading }" />
+            <span>Sync</span>
           </button>
         </div>
       </div>
+    </header>
 
-      <div class="space-y-6">
+    <div class="admin-content">
+      <section class="admin-section">
         <StatsCards :stats="stats" />
-      </div>
+      </section>
 
-      <div class="space-y-6">
-        <div class="flex items-center space-x-3 px-2">
-          <div class="w-1 h-6 bg-indigo-500 rounded-full"></div>
-          <h3 class="text-lg font-bold text-slate-800 tracking-tight">System Event Log</h3>
+      <section class="admin-section">
+        <div class="section-header">
+          <div class="accent-bar"></div>
+          <h2>System Event Log</h2>
         </div>
-        <div class="glass-card rounded-2xl overflow-hidden border-white/40">
+        <div class="table-container">
           <EventLogTable :logs="logs" />
         </div>
-      </div>
+      </section>
     </div>
   </div>
 </template>
+
+<style scoped>
+.admin-page {
+  height: 100%;
+  overflow-y: auto;
+  background-color: var(--color-gray-50);
+}
+
+.admin-header {
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-200);
+  padding: var(--space-6) var(--space-8);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.header-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.title-icon-box {
+  width: 44px;
+  height: 44px;
+  background-color: var(--color-gray-900);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius-md);
+}
+
+.title-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.title-text h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-gray-900);
+  letter-spacing: -0.02em;
+}
+
+.title-text p {
+  font-size: 0.8125rem;
+  color: var(--color-gray-500);
+  font-weight: 500;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.auto-refresh-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
+.checkbox-input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+}
+
+.checkbox-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-gray-700);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  background-color: var(--color-gray-50);
+  border-color: var(--color-gray-300);
+}
+
+.btn-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.is-spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.admin-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.accent-bar {
+  width: 4px;
+  height: 24px;
+  background-color: var(--color-primary);
+  border-radius: 2px;
+}
+
+.section-header h2 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-gray-900);
+}
+
+.table-container {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+</style>

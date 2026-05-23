@@ -1,17 +1,35 @@
 <template>
-  <div class="flex items-center space-x-1.5 px-4 py-2 bg-stone-100 rounded-2xl max-w-max">
-    <div class="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
-    <div class="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style="animation-delay: 120ms"></div>
-    <div class="w-1.5 h-1.5 bg-stone-400 rounded-full animate-bounce" style="animation-delay: 240ms"></div>
+  <div class="typing-indicator">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
   </div>
 </template>
 
 <style scoped>
-@keyframes bounce {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-5px) scale(0.85); }
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--color-gray-50);
+  border-radius: var(--border-radius-md);
+  width: fit-content;
 }
-.animate-bounce {
-  animation: bounce 0.5s infinite cubic-bezier(0.32, 0, 0.67, 0);
+
+.dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-gray-300);
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.dot:nth-child(1) { animation-delay: -0.32s; }
+.dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1.0); }
 }
 </style>

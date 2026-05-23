@@ -1,5 +1,5 @@
 <script setup>
-import { Shield, Plus, Lock, Calendar } from 'lucide-vue-next'
+import { Shield, Plus, Lock } from 'lucide-vue-next'
 import { formatDistanceToNow } from 'date-fns'
 import { ru } from 'date-fns/locale'
 
@@ -22,42 +22,145 @@ const formatDate = (dateStr) => {
 </script>
 
 <template>
-  <div class="px-6 py-4 flex items-center justify-between border-b border-white/20 bg-white/10 backdrop-blur-sm">
-    <div class="flex items-center space-x-4">
-      <div 
-        class="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-500"
-        :class="isBlocked ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' : 'bg-indigo-500/10 text-indigo-600 border border-indigo-500/20'"
-      >
-        <Lock v-if="isBlocked" class="w-5 h-5" />
-        <Shield v-else class="w-5 h-5" />
+  <div class="session-info">
+    <div class="session-status" :class="{ 'is-blocked': isBlocked }">
+      <div class="status-icon-box">
+        <Lock v-if="isBlocked" class="status-icon" />
+        <Shield v-else class="status-icon" />
       </div>
-      
-      <div class="flex flex-col">
-        <div class="flex items-center space-x-2">
-          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Active Session</span>
-          <div v-if="isBlocked" class="px-1.5 py-0.5 rounded bg-rose-500 text-white text-[9px] font-black uppercase tracking-tighter">
-            Locked
-          </div>
+      <div class="session-details">
+        <div class="session-label">
+          <span>Active Session</span>
+          <span v-if="isBlocked" class="blocked-badge">Blocked</span>
         </div>
-        <div class="flex items-center space-x-3 mt-0.5">
-          <code class="text-xs font-mono font-semibold text-slate-700">
-            {{ sessionId?.slice(0, 8) }}...
-          </code>
-          <div class="w-1 h-1 rounded-full bg-slate-300"></div>
-          <div class="flex items-center space-x-1.5 text-slate-400">
-            <Calendar class="w-3 h-3" />
-            <span class="text-[11px] font-medium">{{ formatDate(createdAt) }}</span>
-          </div>
+        <div class="session-meta">
+          <code class="session-id">{{ sessionId?.slice(0, 8) }}</code>
+          <span class="dot"></span>
+          <span class="session-time">{{ formatDate(createdAt) }}</span>
         </div>
       </div>
     </div>
 
     <button
       @click="emit('new')"
-      class="flex items-center space-x-2 px-4 py-2 rounded-xl bg-white/60 hover:bg-white border border-white/80 shadow-sm transition-all duration-300 group"
+      class="new-session-btn"
+      title="Start New Session"
     >
-      <Plus class="w-4 h-4 text-indigo-600 transition-transform duration-300 group-hover:rotate-90" />
-      <span class="text-sm font-bold text-slate-700">New Session</span>
+      <Plus class="btn-icon" />
+      <span>New Session</span>
     </button>
   </div>
 </template>
+
+<style scoped>
+.session-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.session-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.status-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-gray-50);
+  border: 1px solid var(--color-gray-100);
+  color: var(--color-gray-500);
+}
+
+.is-blocked .status-icon-box {
+  background-color: #fff1f2;
+  border-color: #fecaca;
+  color: var(--color-danger);
+}
+
+.status-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.session-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.session-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-gray-400);
+  letter-spacing: 0.05em;
+}
+
+.blocked-badge {
+  background-color: var(--color-danger);
+  color: var(--color-white);
+  padding: 1px 4px;
+  border-radius: 2px;
+  font-size: 0.6rem;
+  font-weight: 800;
+}
+
+.session-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.session-id {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-gray-700);
+  font-weight: 600;
+}
+
+.dot {
+  width: 3px;
+  height: 3px;
+  background-color: var(--color-gray-300);
+  border-radius: 50%;
+}
+
+.session-time {
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
+}
+
+.new-session-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-md);
+  color: var(--color-gray-700);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.new-session-btn:hover {
+  background-color: var(--color-gray-50);
+  border-color: var(--color-gray-300);
+}
+
+.btn-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--color-primary);
+}
+</style>

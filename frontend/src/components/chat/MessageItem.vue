@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { User, Bot, AlertTriangle, ShieldCheck, ShieldAlert } from 'lucide-vue-next'
+import { User, Bot, ShieldAlert, AlertTriangle } from 'lucide-vue-next'
 import RiskBadge from '@/components/risk/RiskBadge.vue'
 
 const props = defineProps({
@@ -16,76 +16,176 @@ const props = defineProps({
 
 const isUser = computed(() => props.message.role === 'user')
 const isBlocked = computed(() => props.message.is_blocked)
-
-const containerClass = computed(() => {
-  return [
-    'flex w-full mb-6 px-6 transition-all duration-500',
-    isUser.value ? 'justify-end' : 'justify-start'
-  ]
-})
-
-const bubbleClass = computed(() => {
-  if (isUser.value) {
-    return 'bg-indigo-600 text-white rounded-2xl rounded-tr-none shadow-lg shadow-indigo-600/20'
-  }
-  return 'glass-card rounded-2xl rounded-tl-none border-white/60'
-})
 </script>
 
 <template>
-  <div :class="containerClass" class="message-transition">
-    <div 
-      class="flex max-w-[85%] sm:max-w-[75%]"
-      :class="isUser ? 'flex-row-reverse' : 'flex-row'"
-    >
-      <!-- Avatar -->
-      <div 
-        class="flex-shrink-0 mt-1"
-        :class="isUser ? 'ml-3' : 'mr-3'"
-      >
-        <div 
-          class="w-8 h-8 rounded-xl flex items-center justify-center border transition-all duration-300"
-          :class="isUser 
-            ? 'bg-indigo-50 border-indigo-100 text-indigo-600' 
-            : 'bg-white/80 border-slate-100 text-slate-500 shadow-sm'"
-        >
-          <User v-if="isUser" class="w-4 h-4" />
-          <Bot v-else class="w-4 h-4" />
+  <div class="message-row" :class="[message.role, { 'is-blocked': isBlocked }]">
+    <div class="message-inner">
+      <div class="message-avatar">
+        <div class="avatar-box">
+          <User v-if="isUser" class="avatar-icon" />
+          <Bot v-else class="avatar-icon" />
         </div>
       </div>
-
-      <!-- Content -->
-      <div class="flex flex-col" :class="isUser ? 'items-end' : 'items-start'">
-        <div :class="[bubbleClass, 'px-5 py-3.5 relative']">
-          <p class="text-[15px] leading-relaxed whitespace-pre-wrap font-medium">
-            {{ message.content }}
-          </p>
-
-          <!-- Blocked Overlay/Icon -->
-          <div 
-            v-if="isBlocked" 
-            class="absolute -top-2 -right-2 bg-rose-500 text-white p-1 rounded-full shadow-lg border-2 border-white"
-          >
-            <ShieldAlert class="w-3.5 h-3.5" />
+      
+      <div class="message-content">
+        <div class="message-header">
+          <span class="role-name">{{ isUser ? 'User' : 'Assistant' }}</span>
+          <div v-if="isBlocked" class="blocked-indicator">
+            <ShieldAlert class="indicator-icon" />
+            <span>Blocked</span>
           </div>
         </div>
 
-        <!-- Meta Info (Risk, Timestamp) -->
-        <div 
-          v-if="!isUser && showRisk" 
-          class="flex items-center space-x-3 mt-2 px-1"
-        >
-          <div class="flex items-center space-x-1.5 bg-white/40 px-2 py-0.5 rounded-lg border border-white/60">
-            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Security Scan</span>
+        <div class="message-text">
+          {{ message.content }}
+        </div>
+
+        <div v-if="!isUser && showRisk" class="message-footer">
+          <div class="security-info">
+            <span class="security-label">Security Scan:</span>
             <RiskBadge :level="message.risk_level" />
           </div>
-          
-          <div v-if="isBlocked" class="flex items-center space-x-1 text-rose-500 font-bold text-[10px] uppercase tracking-wider">
-            <AlertTriangle class="w-3 h-3" />
-            <span>Policy Violation</span>
+          <div v-if="isBlocked" class="policy-alert">
+            <AlertTriangle class="alert-icon" />
+            <span>Policy Violation Detected</span>
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.message-row {
+  width: 100%;
+  padding: var(--space-8) var(--space-6);
+  border-bottom: 1px solid var(--color-gray-50);
+}
+
+.message-row.user {
+  background-color: var(--color-white);
+}
+
+.message-row.assistant {
+  background-color: var(--color-gray-50);
+}
+
+.message-row.is-blocked {
+  background-color: #fff1f2; /* Light red */
+}
+
+.message-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  gap: var(--space-6);
+}
+
+.message-avatar {
+  flex-shrink: 0;
+}
+
+.avatar-box {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user .avatar-box {
+  background-color: var(--color-gray-800);
+  color: var(--color-white);
+}
+
+.assistant .avatar-box {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.avatar-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.message-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.message-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-1);
+}
+
+.role-name {
+  font-weight: 700;
+  font-size: 0.875rem;
+  color: var(--color-gray-900);
+}
+
+.blocked-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--color-danger);
+  letter-spacing: 0.05em;
+}
+
+.indicator-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.message-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-gray-800);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.message-footer {
+  margin-top: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.security-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.security-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-gray-400);
+  letter-spacing: 0.05em;
+}
+
+.policy-alert {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1.5);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-danger);
+}
+
+.alert-icon {
+  width: 14px;
+  height: 14px;
+}
+</style>

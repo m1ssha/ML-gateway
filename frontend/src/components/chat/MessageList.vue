@@ -2,6 +2,7 @@
 import { useAutoScroll } from '@/composables/useAutoScroll'
 import MessageItem from './MessageItem.vue'
 import TypingIndicator from './TypingIndicator.vue'
+import { MessageSquare } from 'lucide-vue-next'
 
 const props = defineProps({
   messages: {
@@ -18,37 +19,118 @@ const { containerRef } = useAutoScroll(() => props.messages.length)
 <template>
   <div
     ref="containerRef"
-    class="flex-1 overflow-y-auto p-4 space-y-2 scroll-smooth"
+    class="message-list-container"
   >
-    <div v-if="messages.length === 0 && !isLoading" class="h-full flex flex-col items-center justify-center text-stone-400 space-y-4">
-      <div class="w-16 h-16 bg-stone-50 rounded-full flex items-center justify-center border border-stone-100">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-        </svg>
+    <div v-if="messages.length === 0 && !isLoading" class="empty-state">
+      <div class="empty-icon-wrapper">
+        <MessageSquare class="empty-icon" />
       </div>
-      <div class="text-center">
-        <p class="font-medium text-stone-500">История сообщений пуста</p>
-        <p class="text-sm text-stone-400">Отправьте сообщение, чтобы начать диалог.</p>
+      <div class="empty-text">
+        <h3>No conversation history</h3>
+        <p>Send a message to start a secure session via the ML Gateway.</p>
       </div>
     </div>
 
-    <MessageItem
-      v-for="(msg, idx) in messages"
-      :key="msg.id"
-      :message="msg"
-      :show-risk="showRisk"
-      :index="idx"
-    />
+    <div class="messages-stack">
+      <MessageItem
+        v-for="(msg, idx) in messages"
+        :key="msg.id"
+        :message="msg"
+        :show-risk="showRisk"
+        :index="idx"
+      />
 
-    <div v-if="isLoading" class="flex justify-start mb-6 message-enter">
-      <div class="mr-3 flex-shrink-0">
-        <div class="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center border border-stone-200">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
+      <div v-if="isLoading" class="typing-container">
+        <div class="typing-avatar">
+          <div class="avatar-bot small animate-pulse"></div>
         </div>
+        <TypingIndicator />
       </div>
-      <TypingIndicator />
     </div>
   </div>
 </template>
+
+<style scoped>
+.message-list-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10);
+  text-align: center;
+}
+
+.empty-icon-wrapper {
+  width: 64px;
+  height: 64px;
+  background-color: var(--color-gray-50);
+  border: 1px solid var(--color-gray-100);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+}
+
+.empty-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--color-gray-300);
+}
+
+.empty-text h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-gray-700);
+  margin-bottom: var(--space-2);
+}
+
+.empty-text p {
+  font-size: 0.875rem;
+  color: var(--color-gray-400);
+  max-width: 320px;
+}
+
+.messages-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.typing-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-12);
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.typing-avatar {
+  flex-shrink: 0;
+}
+
+.avatar-bot.small {
+  width: 24px;
+  height: 24px;
+  background-color: var(--color-primary);
+  border-radius: var(--border-radius-sm);
+  opacity: 0.5;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.2; }
+}
+</style>

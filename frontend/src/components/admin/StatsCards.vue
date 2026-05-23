@@ -1,5 +1,4 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue'
 import { ShieldCheck, ShieldAlert, BarChart3, Users } from 'lucide-vue-next'
 
 const props = defineProps({
@@ -13,90 +12,108 @@ const props = defineProps({
     })
   }
 })
-
-const animated = ref({
-  total_requests: 0,
-  blocked_requests: 0,
-  active_sessions: 0,
-  avg_risk_score: 0
-})
-
-const animateValue = (key, targetValue, duration = 600) => {
-  const isFloat = key === 'avg_risk_score'
-  const startValue = animated.value[key]
-  const diff = targetValue - startValue
-  const startTime = performance.now()
-
-  const step = (currentTime) => {
-    const elapsed = currentTime - startTime
-    const progress = Math.min(elapsed / duration, 1)
-    const eased = 1 - Math.pow(1 - progress, 3)
-
-    animated.value[key] = isFloat
-      ? parseFloat((startValue + diff * eased).toFixed(2))
-      : Math.round(startValue + diff * eased)
-
-    if (progress < 1) {
-      requestAnimationFrame(step)
-    }
-  }
-
-  requestAnimationFrame(step)
-}
-
-watch(() => props.stats.total_requests, (v) => animateValue('total_requests', v || 0))
-watch(() => props.stats.blocked_requests, (v) => animateValue('blocked_requests', v || 0))
-watch(() => props.stats.active_sessions, (v) => animateValue('active_sessions', v || 0))
-watch(() => props.stats.avg_risk_score, (v) => animateValue('avg_risk_score', v || 0))
-
-onMounted(() => {
-  animated.value.total_requests = props.stats.total_requests || 0
-  animated.value.blocked_requests = props.stats.blocked_requests || 0
-  animated.value.active_sessions = props.stats.active_sessions || 0
-  animated.value.avg_risk_score = props.stats.avg_risk_score || 0
-})
 </script>
 
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-stone-100 flex items-center space-x-4">
-      <div class="bg-emerald-50 p-3 rounded-lg text-emerald-600">
-        <BarChart3 class="w-6 h-6" />
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon-wrapper requests">
+        <BarChart3 class="stat-icon" />
       </div>
-      <div>
-        <p class="text-xs font-medium text-stone-500 uppercase tracking-wider">Всего запросов</p>
-        <p class="text-2xl font-bold text-stone-800 font-mono tabular-nums">{{ animated.total_requests }}</p>
-      </div>
-    </div>
-
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-stone-100 flex items-center space-x-4">
-      <div class="bg-red-50 p-3 rounded-lg text-red-600">
-        <ShieldAlert class="w-6 h-6" />
-      </div>
-      <div>
-        <p class="text-xs font-medium text-stone-500 uppercase tracking-wider">Заблокировано</p>
-        <p class="text-2xl font-bold text-stone-800 font-mono tabular-nums">{{ animated.blocked_requests }}</p>
+      <div class="stat-info">
+        <div class="stat-label">Total Requests</div>
+        <div class="stat-value">{{ stats.total_requests || 0 }}</div>
       </div>
     </div>
 
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-stone-100 flex items-center space-x-4">
-      <div class="bg-amber-50 p-3 rounded-lg text-amber-600">
-        <ShieldCheck class="w-6 h-6" />
+    <div class="stat-card">
+      <div class="stat-icon-wrapper blocked">
+        <ShieldAlert class="stat-icon" />
       </div>
-      <div>
-        <p class="text-xs font-medium text-stone-500 uppercase tracking-wider">Средний риск</p>
-        <p class="text-2xl font-bold text-stone-800 font-mono tabular-nums">{{ animated.avg_risk_score }}</p>
+      <div class="stat-info">
+        <div class="stat-label">Blocked</div>
+        <div class="stat-value">{{ stats.blocked_requests || 0 }}</div>
       </div>
     </div>
 
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-stone-100 flex items-center space-x-4">
-      <div class="bg-blue-50 p-3 rounded-lg text-blue-600">
-        <Users class="w-6 h-6" />
+    <div class="stat-card">
+      <div class="stat-icon-wrapper risk">
+        <ShieldCheck class="stat-icon" />
       </div>
-      <div>
-        <p class="text-xs font-medium text-stone-500 uppercase tracking-wider">Активных сессий</p>
-        <p class="text-2xl font-bold text-stone-800 font-mono tabular-nums">{{ animated.active_sessions }}</p>
+      <div class="stat-info">
+        <div class="stat-label">Avg. Risk</div>
+        <div class="stat-value">{{ (stats.avg_risk_score || 0).toFixed(2) }}</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon-wrapper active">
+        <Users class="stat-icon" />
+      </div>
+      <div class="stat-info">
+        <div class="stat-label">Active Sessions</div>
+        <div class="stat-value">{{ stats.active_sessions || 0 }}</div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+.stat-card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.requests { background-color: #ecfdf5; color: #10b981; }
+.blocked { background-color: #fff1f2; color: #ef4444; }
+.risk { background-color: #fffbeb; color: #f59e0b; }
+.active { background-color: #eff6ff; color: #3b82f6; }
+
+.stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-gray-900);
+  font-family: var(--font-mono);
+  line-height: 1;
+  margin-top: var(--space-1);
+}
+</style>
