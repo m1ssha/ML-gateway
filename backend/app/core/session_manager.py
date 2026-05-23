@@ -3,6 +3,7 @@ from typing import Any
 from app.storage.database import AsyncSessionLocal
 from app.storage.repositories.session_repository import SessionRepository
 from app.storage.repositories.message_repository import MessageRepository
+from app.storage.redis_client import get_redis
 from app.core.context_builder import context_builder
 from app.services.ml_client import ml_client
 from app.core.decision_engine import decision_engine
@@ -38,20 +39,27 @@ class SessionManager:
             history = await message_repo.get_session_history(session_id, limit=50)
             current_step = (history[0].step + 1) if history else 1
 
-            # 3. Формируем контекст
-            context = await context_builder.build_context(session_id)
+            if current_step == 1:
+                # Пропускаем ML-инференс для первого сообщения
+                risk_score = 0.0
+                is_attack = False
+                new_cumulative_risk = session.cumulative_risk
+                await event_logger.log(session_id, "ml_skipped", {"step": 1})
+            else:
+                # 3. Формируем контекст
+                context = await context_builder.build_context(session_id)
 
-            # 4. ML-инференс
-            ml_result = await ml_client.predict(session_id, context)
-            await event_logger.log(session_id, "ml_inference", ml_result)
+                # 4. ML-инференс
+                ml_result = await ml_client.predict(session_id, context)
+                await event_logger.log(session_id, "ml_inference", ml_result)
 
-            risk_score = ml_result["risk_score"]
-            is_attack = ml_result["is_attack"]
+                risk_score = ml_result["risk_score"]
+                is_attack = ml_result["is_attack"]
 
-            # 5. Обновляем накопительный риск (экспоненциальное сглаживание)
-            # new = 0.7 * old + 0.3 * current
-            new_cumulative_risk = 0.7 * session.cumulative_risk + 0.3 * risk_score
-            await session_repo.update_cumulative_risk(session_id, new_cumulative_risk)
+                # 5. Обновляем накопительный риск (экспоненциальное сглаживание)
+                # new = 0.7 * old + 0.3 * current
+                new_cumulative_risk = 0.7 * session.cumulative_risk + 0.3 * risk_score
+                await session_repo.update_cumulative_risk(session_id, new_cumulative_risk)
 
             # 6. Принимаем решение
             decision = decision_engine.decide(risk_score, is_attack, new_cumulative_risk)
@@ -104,6 +112,10 @@ class SessionManager:
             await message_repo.add_message(
                 session_id, current_step + 1, "assistant", llm_reply
             )
+
+            # 10. Инвалидируем кэш контекста, чтобы следующее сообщение получило обновленную историю
+            redis = await get_redis()
+            await redis.delete(f"context:{session_id}")
 
             return {
                 "session_id": str(session_id),
