@@ -52,8 +52,8 @@ services:
     ports:
       - "8001:8001"
     volumes:
-      - ../backend/app:/app/app
-      - ../backend/alembic:/app/alembic
+      - ../backend:/app
+      - /app/venv
     networks:
       - gateway-network-dev
 
@@ -66,7 +66,8 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ../frontend/src:/app/src
+      - ../frontend:/app
+      - /app/node_modules
     networks:
       - gateway-network-dev
 
