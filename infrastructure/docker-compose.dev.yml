@@ -48,7 +48,11 @@ services:
       - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-gateway}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-llm_gateway}
       - REDIS_URL=redis://redis:6379/0
       - ML_SERVICE_URL=http://ml-service:8000/predict
-      - LLM_PROVIDER=mock
+      - LLM_PROVIDER=${LLM_PROVIDER:-openrouter}
+      - LLM_MODEL=${LLM_MODEL:-qwen/qwen3.6-35b-a3b}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - HTTP_REFERER=${HTTP_REFERER}
+      - APP_TITLE=${APP_TITLE}
     ports:
       - "8001:8001"
     volumes:
